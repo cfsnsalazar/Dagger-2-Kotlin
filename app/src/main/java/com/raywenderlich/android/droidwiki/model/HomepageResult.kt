@@ -35,17 +35,17 @@ import org.json.JSONObject
 
 data class HomepageResult(private val response: Response) {
 
-  var homepage: WikiHomepage? = null
+    var homepage: WikiHomepage? = null
 
-  init {
-    homepage = response.body()?.string()?.let {
-      JSONObject(it)
-          .getJSONObject("parse")
-          .getJSONObject("text")
-          .getString("*")
-          .let {
-            WikiHomepage(it)
-          }
+    init {
+        homepage = response.body()?.string()?.let { jsonString ->
+            JSONObject(jsonString)
+                .getJSONObject("parse")
+                .getJSONObject("text")
+                .getString("*")
+                .let { html ->
+                    WikiHomepage(html)
+                }
+        }
     }
-  }
 }

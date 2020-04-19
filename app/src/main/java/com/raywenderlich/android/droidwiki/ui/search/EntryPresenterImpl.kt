@@ -41,36 +41,37 @@ import java.io.IOException
 
 class EntryPresenterImpl : EntryPresenter {
 
-  private lateinit var entryView: EntryView
+    private lateinit var entryView: EntryView
 
-  private val client: OkHttpClient = OkHttpClient()
-  private val api: WikiApi = WikiApi(client)
-  private val wiki: Wiki = Wiki(api)
+    private val client: OkHttpClient = OkHttpClient()
+    private val api: WikiApi = WikiApi(client)
+    private val wiki: Wiki = Wiki(api)
 
-  override fun setView(entryView: EntryView) {
-    this.entryView = entryView
-  }
+    override fun setView(entryView: EntryView) {
+        this.entryView = entryView
+    }
 
-  override fun getEntry(query: String) {
-    entryView.displayLoading()
-    wiki.search(query).enqueue(object : Callback {
-      override fun onResponse(call: Call?, response: Response?) {
-        entryView.dismissLoading()
-        //Everything is ok, show the result if not null
-        if (response?.isSuccessful == true) {
-          SearchResult(response).list?.let {
-            entryView.displayEntries(it)
-          }
-        } else {
-          entryView.displayError(response?.message())
-        }
-      }
+    override fun getEntry(query: String) {
+        entryView.displayLoading()
+        wiki.search(query).enqueue(object : Callback {
+            override fun onResponse(call: Call?, response: Response?) {
+                entryView.dismissLoading()
+                response?.let {
+                    if (it.isSuccessful) {
+                        SearchResult(response).list?.let { entries ->
+                            entryView.displayEntries(entries)
+                        }
+                    } else {
+                        entryView.displayError(response.message())
+                    }
+                }
+            }
 
-      override fun onFailure(call: Call?, t: IOException?) {
-        entryView.displayError(t?.message)
-        t?.printStackTrace()
-      }
-    })
+            override fun onFailure(call: Call?, error: IOException?) {
+                entryView.displayError(error?.message)
+                error?.printStackTrace()
+            }
+        })
 
-  }
+    }
 }

@@ -96,7 +96,7 @@ class HomepageActivity : Activity(), HomepageView {
   }
 
   override fun displayError(error: String?) {
-    Log.e("ERROR", error)
+    Log.e("ERROR", error ?: "")
     runOnUiThread {
       R.string.error.errorDialog(this)
     }

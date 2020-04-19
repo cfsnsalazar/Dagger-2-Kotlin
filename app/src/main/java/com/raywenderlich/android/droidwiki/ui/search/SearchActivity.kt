@@ -85,7 +85,6 @@ class SearchActivity : Activity(), EntryView {
             return true
           }
         })
-
         queryHint = getString(R.string.search_hint)
       }
 

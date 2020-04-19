@@ -35,37 +35,42 @@ import okhttp3.Call
 import okhttp3.HttpUrl
 import okhttp3.OkHttpClient
 import okhttp3.Request
+import java.lang.Exception
 
 class WikiApi(private val client: OkHttpClient) {
 
-  fun search(query: String): Call {
-    val urlBuilder = HttpUrl.parse("${Const.PROTOCOL}://${Const.LANGUAGE}.${Const.BASE_URL}")?.newBuilder()
-        ?.addQueryParameter("action", "query")
-        ?.addQueryParameter("list", "search")
-        ?.addQueryParameter("format", "json")
-        ?.addQueryParameter("srsearch", query)
+    fun search(query: String): Call {
+        val urlBuilder =
+            HttpUrl.parse("${Const.PROTOCOL}://${Const.LANGUAGE}.${Const.BASE_URL}")?.newBuilder()
+                ?.addQueryParameter("action", "query")
+                ?.addQueryParameter("list", "search")
+                ?.addQueryParameter("format", "json")
+                ?.addQueryParameter("srsearch", query)
+        val url =
+            urlBuilder?.build() ?: throw InstantiationException("Url was not properly initialized")
+        return Request.Builder()
+            .url(url)
+            .get()
+            .build()
+            .let { request ->
+                client.newCall(request)
+            }
+    }
 
-    return Request.Builder()
-        .url(urlBuilder?.build())
-        .get()
-        .build()
-        .let {
-          client.newCall(it)
-        }
-  }
-
-  fun getHomepage(): Call {
-    val urlBuilder = HttpUrl.parse("${Const.PROTOCOL}://${Const.LANGUAGE}.${Const.BASE_URL}")?.newBuilder()
-        ?.addQueryParameter("action", "parse")
-        ?.addQueryParameter("page", "Main Page")
-        ?.addQueryParameter("format", "json")
-
-    return Request.Builder()
-        .url(urlBuilder?.build())
-        .get()
-        .build()
-        .let {
-          client.newCall(it)
-        }
-  }
+    fun getHomepage(): Call {
+        val urlBuilder =
+            HttpUrl.parse("${Const.PROTOCOL}://${Const.LANGUAGE}.${Const.BASE_URL}")?.newBuilder()
+                ?.addQueryParameter("action", "parse")
+                ?.addQueryParameter("page", "Main Page")
+                ?.addQueryParameter("format", "json")
+        val url =
+            urlBuilder?.build() ?: throw InstantiationException("Url was not properly initialized")
+        return Request.Builder()
+            .url(url)
+            .get()
+            .build()
+            .let {
+                client.newCall(it)
+            }
+    }
 }
