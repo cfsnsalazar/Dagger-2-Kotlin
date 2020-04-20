@@ -41,23 +41,28 @@ import com.raywenderlich.android.droidwiki.model.Entry
 import kotlinx.android.synthetic.main.activity_search.*
 import android.widget.SearchView
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.raywenderlich.android.droidwiki.application.WikiApplication
+import com.raywenderlich.android.droidwiki.ui.common.WikiActivity
 import com.raywenderlich.android.droidwiki.utils.errorDialog
+import javax.inject.Inject
 
-class SearchActivity : Activity(), EntryView {
+class SearchActivity : WikiActivity(), EntryView {
 
-  private val presenter: EntryPresenter = EntryPresenterImpl()
+  @Inject
+  lateinit var presenter: EntryPresenter
 
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
     setContentView(R.layout.activity_search)
-
     actionBar?.setHomeAsUpIndicator(R.drawable.ic_home)
     actionBar?.setDisplayHomeAsUpEnabled(true)
-
     results_rv.layoutManager = LinearLayoutManager(this)
-
     presenter.setView(this)
 
+  }
+
+  override fun initDepedencyInjection() {
+    (application as WikiApplication).wikiComponent.inject(this)
   }
 
   // Create the menu entries

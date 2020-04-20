@@ -37,23 +37,30 @@ import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import com.raywenderlich.android.droidwiki.R
+import com.raywenderlich.android.droidwiki.application.WikiApplication
 import com.raywenderlich.android.droidwiki.model.WikiHomepage
+import com.raywenderlich.android.droidwiki.ui.common.WikiActivity
 import com.raywenderlich.android.droidwiki.utils.start
 import com.raywenderlich.android.droidwiki.utils.parseHtml
 import kotlinx.android.synthetic.main.activity_homepage.*
 import com.raywenderlich.android.droidwiki.ui.search.SearchActivity
 import com.raywenderlich.android.droidwiki.utils.errorDialog
+import javax.inject.Inject
 
-class HomepageActivity : Activity(), HomepageView {
+class HomepageActivity : WikiActivity(), HomepageView {
 
-  private val presenter: HomepagePresenter = HomepagePresenterImpl()
+  @Inject
+  lateinit var presenter: HomepagePresenter
 
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
     setContentView(R.layout.activity_homepage)
-
     presenter.setView(this)
     presenter.loadHomepage()
+  }
+
+  override fun initDepedencyInjection() {
+    (application as WikiApplication).wikiComponent.inject(this)
   }
 
   override fun onCreateOptionsMenu(menu: Menu?): Boolean {
