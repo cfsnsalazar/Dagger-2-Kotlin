@@ -37,17 +37,14 @@ import okhttp3.OkHttpClient
 import okhttp3.Request
 import java.lang.Exception
 
-class WikiApi(private val client: OkHttpClient) {
+class WikiApi(private val client: OkHttpClient, private val requestBuilder: HttpUrl.Builder?) {
 
     fun search(query: String): Call {
-        val urlBuilder =
-            HttpUrl.parse("${Const.PROTOCOL}://${Const.LANGUAGE}.${Const.BASE_URL}")?.newBuilder()
-                ?.addQueryParameter("action", "query")
-                ?.addQueryParameter("list", "search")
-                ?.addQueryParameter("format", "json")
-                ?.addQueryParameter("srsearch", query)
-        val url =
-            urlBuilder?.build() ?: throw InstantiationException("Url was not properly initialized")
+        requestBuilder?.addQueryParameter("action", "query")
+        requestBuilder?.addQueryParameter("list", "search")
+        requestBuilder?.addQueryParameter("format", "json")
+        requestBuilder?.addQueryParameter("srsearch", query)
+        val url = requestBuilder?.build() ?: throw InstantiationException("Url was not properly initialized")
         return Request.Builder()
             .url(url)
             .get()
@@ -58,13 +55,10 @@ class WikiApi(private val client: OkHttpClient) {
     }
 
     fun getHomepage(): Call {
-        val urlBuilder =
-            HttpUrl.parse("${Const.PROTOCOL}://${Const.LANGUAGE}.${Const.BASE_URL}")?.newBuilder()
-                ?.addQueryParameter("action", "parse")
-                ?.addQueryParameter("page", "Main Page")
-                ?.addQueryParameter("format", "json")
-        val url =
-            urlBuilder?.build() ?: throw InstantiationException("Url was not properly initialized")
+        requestBuilder?.addQueryParameter("action", "parse")
+        requestBuilder?.addQueryParameter("page", "Main Page")
+        requestBuilder?.addQueryParameter("format", "json")
+        val url = requestBuilder?.build() ?: throw InstantiationException("Url was not properly initialized")
         return Request.Builder()
             .url(url)
             .get()
